@@ -6,9 +6,16 @@ output: html_document
 ---
 ##Executive Summary
 
+The purpose of this project is to demonstrate the analysis and model building process of machine learning tools and techniques.  The subject of this analysis and modeling exercise is a set of experimental data gathered from Brazilian university research team that have instrumented six test subjects with various motion sensors while they perform an exercise with a barbell using five techniques that range "perfect form" (A) to "very poor form" (E).  The question these researchers are exploring is whether machine learning techniques can be used on the data they collected to predict whether a person is using proper form in their exercise or not.  The ultimate vision of the team is to provide real-time feedback to those performing exercises to improve the quality of their exercise experience.
+
+The results of the modeling below confirm that this is possible with high accuracy.  
+
 ##Context
 
-Source of Experimental Data: http://groupware.les.inf.puc-rio.br/har (see section "Weight Lifting Exercises Dataset"").  See this paper: http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201.  From the paper:
+The details of the experiment can be found here along with their research paper: 
+http://groupware.les.inf.puc-rio.br/har (see section "Weight Lifting Exercises Dataset"").  See this paper: http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201.  
+
+The A,B,C,D,E barbell lifting form type model is described in this excerpt from their paper:
 "...Participants were asked to perform one set of 10 repetitions
 of the Unilateral Dumbbell Biceps Curl in Five different fashions:
 exactly according to the specification (Class A), throwing
@@ -22,7 +29,17 @@ while the other 4 classes correspond to common mistakes..."
 
 ###How the Model was Built
 
+The project source data for this project consists of two data sets.  One set ("trainingFile") contains 19622 observations with 160 variables (columns in the matrix).  The test ("testFile") set contains 20 observations and also 160 variables.
+
+The initial steps included studying the data in the training and test files through visual inspection of the files using head() and names() to get my bearings for further analysis.  I then used the nearZeroVar() function on the two sets of data.  What I discovered is that the trainFile had 60 of 160 columns reporting ner zero values (NZV) and the test file had 101 of 160 with NZV.  I also saw that the last column of the files noted the type of workout classifer ("classe") and that the first 7 columns of the file included information about the test subject, time of the test etc. that did not seem useful for the nature of this modeling (though may be useful in terms of analyzing the quality of the training inputs and the test subjects) and I exlcuded those from the data sets as part of the clean up process.
+
+Since the testFile only used 101 columns of test inputs, I chose to immediately use that information to narrow the trainFile to the same set of columns and cleaned up both data sets so that only the same 53 columns where in use (53 = 160-100-7).  I now had two smaller data files to work with ("trainingClean" and "testClean").  
+
+Important processing note:  I also later discovered I had to apply the as.numeric() function to the numeric input fields and the factor() function to the "$classe" column due to errors that I got in the later stages using the machine learning processing tools.  Finding the root cause of this processing problem and fix was very time consuming.  
+
 ###How Cross-validation was Used
+
+The next step I followed in the machine learning model development process ("study design" and "cross-validation") was use of the createDataPartition() function from the caret package to randomly sample the trainingClean file and create a subset (70% of the total) for training purposes and another set for testing of the training (30%).  I now had two data sets that I could use for machine learning model development - one for training and one reference set for testing the effectiveness of the model (prior to application to eventual application to the testClean set).
 
 ###Expected Sample Error Calculations
 
@@ -62,6 +79,8 @@ Balanced Accuracy      0.9903   0.9861   0.9637   0.9850   0.9958
 
 ###Link to Predictions
 
+
+
 ###R Code
 
 ```{r loadLibraries, echo=FALSE}
@@ -94,6 +113,9 @@ testFile <- read.csv("pml-testing.csv") # ultimate test file for project submiss
 
 ```{r dataCleanup, echo=FALSE}
 # remove nearZero Values and NAs
+
+trainingNZVCount <- length(nearZeroVar(trainingFile))
+testNZVCount <- length(nearZeroVar(testFile))
 
 # match the columns in the training source to those used in the test set
 keepcols <- c()
