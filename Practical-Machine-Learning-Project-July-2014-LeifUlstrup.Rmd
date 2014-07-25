@@ -95,9 +95,10 @@ https://github.com/leifulstrup/Practical-Machine-Learning-Project
 ###R Code
 
 ```{r loadLibraries, echo=FALSE}
+
 require(caret)
 
-install.packages("doMC") # install parallel processing library
+install.packages("doMC", repos="http://cran.rstudio.com/") # install parallel processing library
 require(doMC)
 registerDoMC(cores = 4)
 
@@ -109,11 +110,13 @@ require("randomForest") # for model training builds
 
 #assume that the working directory has been set correctly
 #download source files to current working directory
-# commented out for this effort since they are already downloaded (remove otherwise to test)
-#download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", "pml-training.csv", method="curl")
-#download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", "pml-testing.csv", method="curl")
-if(!("pml-testing.csv" %in% list.files())) stop("Code Stopped: Missing testing.csv file")
-if(!("pml-training.csv" %in% list.files())) stop("Code Stopped: Missing testing.csv file")
+
+if(!("pml-testing.csv" %in% list.files())) {
+  download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", "pml-testing.csv", method="curl")
+}
+if(!("pml-training.csv" %in% list.files())) {
+  download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", "pml-training.csv", method="curl")
+}
 
 #test files are in the directory
 
@@ -173,13 +176,7 @@ testing$classe <- factor(testing$classe) #key cleanup actvity
 ```{r analyzeCorrelations, echo=FALSE}
 
 trainingCor <- cor(training[, -length(training)]) # account for the classe factor on last column
-highCor <- sum(abs(training[upper.tri(trainingCor)]) > 0.999)
-
-highlyCor <- findCorrelation(training[, -length(training)], cutoff = 0.75)
-
-preProc <- preProcess(training[, -length(training)], method= c("center", "scale"))
-
-trainPredict <- predict(preProc, newdata = training[, -length(training)])
+highCor <- sum(abs(as.numeric(training[upper.tri(trainingCor)])) > 0.999)
 
 ```
 
