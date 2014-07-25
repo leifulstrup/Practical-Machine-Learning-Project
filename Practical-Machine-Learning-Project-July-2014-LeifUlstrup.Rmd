@@ -130,5 +130,20 @@ print(modelFit)
 testPC <- predict(preProc, testing[,-53])
 confusionMatrix(testing$classe, predict(modelFit, testPC))
 
+# Now, let's test this on the testClean data that came from the testing file
+# that file as 53 cols and 20 rows and the results of that feed into the HW assignment
+classTestPC <- predict(preProc, testClean[,-53]) # remove $problem_id = $classe
+classTestPredictedValues <- predict(modelFit, classTestPC) # vector of predicted factors A-E
+classTestPredictedValues <- as.character(classTestPredictedValues)
 
+# code from Prediction Assignment Submission: Instructions
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    }
+  }
+pml_write_files(classTestPredictedValues) # this wites out the 20 answers to 20 files for individual upload
+  
 ```
