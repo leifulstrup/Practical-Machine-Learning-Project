@@ -39,9 +39,13 @@ Important processing note:  I also later discovered I had to apply the as.numeri
 
 ###How Cross-validation was Used
 
-The next step I followed in the machine learning model development process ("study design" and "cross-validation") was use of the createDataPartition() function from the caret package to randomly sample the trainingClean file and create a subset (70% of the total) for training purposes and another set for testing of the training (30%).  I now had two data sets that I could use for machine learning model development - one for training and one reference set for testing the effectiveness of the model (prior to application to eventual application to the testClean set).
+The next step I followed in the machine learning model development process ("study design" and "cross-validation") was use of the createDataPartition() function from the caret package to randomly sample the trainingClean file and create a subset (70% of the total) for training purposes and another set for testing of the training (30%).  I now had two data sets that I could use for machine learning model development - one for training the model and one reference set for testing derived from the training set.
 
 ###Expected Sample Error Calculations
+
+The next step was to follow the guidance from the JHU course on model development and pre-process the training data using the caret preProcess() function, being careful to exclude the "classe" column of factors with the measures A through E of barbell training form since the preProcess function expects all numeric values.  I chose the method = "pca" for principal component analysis in the pre-processing stage in the hopes that this would distill the data to a more compact form given the 52 input variables and thus accelerate the learning process of the train() model development stage.  I chose the "random forest" technique for model development based on a combination of the lecture overview of its utility, forum discussions, and independent text research.
+
+Below are the results from the model that I chose to use for this project based on using the confusionMatric() function with the reference data (testing set) derived from the training file compared to the predictions from the model.  This includes the magnitude of the in-sample error rates.  The accuracy measures were seemingly high at 97.5% and the reference A-E vs predicted A-E were tightly clustered around the diagonal for most of the measures.  The model did have some trouble differentiating some of the predicted results; however, those readings are mostly concentrated in a small number of incorrect predictions.  There is likely similarity between certain forms of the exercise and either better modeling techniques are better sensor placement may be needed to improve the differentiation and the prediction accuracy.
 
 Confusion Matrix and Statistics
 
@@ -77,9 +81,16 @@ Balanced Accuracy      0.9903   0.9861   0.9637   0.9850   0.9958
 
 ###Reasoning Behind Choices Made
 
+For this first project using these techniques, I chose to stick with the recommended pre-processing and model building techniques that were recommended in the class and literature I reviewed.  Also, I spent a considerable amount of time in the early stage of the project getting a better understanding of the data sets, cleaning them up, and also solving unexpected warnings and errors that thwarted my model building efforts.  The processing time of ~12 minutes using 4 cores of a 3.4GHz OSX machine with 32GB of RAM for each model build was also a factor.  I found on the forum dicussion boards the recommended use of the doMC package and library to parallelize the analysis.  This helped to speed the model development and testing; however, I ran out of time to explore additional model development to improve predictions.
+
+I used my model on the 20 record test file set that was included in the course materials and is a required submission.  The model correctly predicted 18 of 20 values on the first pass.  I then used the confusion matrix results to prioritize the likely off diagonal results to predict the next most likely value.  I was able to solve one of the two incorrect predictions on the first attempt and solve the second incorrect answer on the second attempt.  I think there are numerous opportunities to both speed the processing of this data by reducing the number of input columns and also improve the accuracy of the predictions by diving deeper into which inputs cause the model to have trouble differentiating the correct prediction.  All of this can be the subject of subsequent research.
+
+The work by this Brazilian research team is very promising for their potential applicatoin of automated fitness coaching applications.
+
 ###Link to Predictions
 
-
+Here is the link to the public github site for the materials I used in developing this project, Rmd code, and the test set of 20 results expressed in *.txt files:
+https://github.com/leifulstrup/Practical-Machine-Learning-Project
 
 ###R Code
 
