@@ -1,0 +1,134 @@
+---
+title: "Practical-Machine-Learning-July-2014-LeifUlstrup.Rmd"
+author: "Leif Ulstrup"
+date: "July 24, 2014"
+output: html_document
+---
+##Executive Summary
+
+##Context
+
+Source of Experimental Data: http://groupware.les.inf.puc-rio.br/har (see section "Weight Lifting Exercises Dataset"").  See this paper: http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201.  From the paper:
+"...Participants were asked to perform one set of 10 repetitions
+of the Unilateral Dumbbell Biceps Curl in Five different fashions:
+exactly according to the specification (Class A), throwing
+the elbows to the front (Class B), lifting the dumbbell
+only halfway (Class C), lowering the dumbbell only halfway
+(Class D) and throwing the hips to the front (Class E). Class
+A corresponds to the specified execution of the exercise,
+while the other 4 classes correspond to common mistakes..."
+
+##Model Development
+
+###How the Model was Built
+
+###How Cross-validation was Used
+
+###Expected Sample Error Calculations
+
+###Reasoning Behind Choices Made
+
+###Link to Predictions
+
+###R Code
+
+```{r loadLibraries, echo=FALSE}
+require(caret)
+
+install.packages("doMC") # install parallel processing library
+require(doMC)
+registerDoMC(cores = 4)
+
+require("randomForest") # for model training builds
+
+```
+
+```{r ingestData, echo=FALSE}
+
+#assume that the working directory has been set correctly
+#download source files to current working directory
+# commented out for this effort since they are already downloaded (remove otherwise to test)
+#download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", "pml-training.csv", method="curl")
+#download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", "pml-testing.csv", method="curl")
+if(!("pml-testing.csv" %in% list.files())) stop("Code Stopped: Missing testing.csv file")
+if(!("pml-training.csv" %in% list.files())) stop("Code Stopped: Missing testing.csv file")
+
+#test files are in the directory
+
+trainingFile <- read.csv("pml-training.csv") # source file for training and testing fit
+testFile <- read.csv("pml-testing.csv") # ultimate test file for project submission
+
+```
+
+```{r dataCleanup, echo=FALSE}
+# remove nearZero Values and NAs
+
+# match the columns in the training source to those used in the test set
+keepcols <- c()
+for (i in names(testFile)) {
+  if(!is.na(testFile[[i]][1])){
+    #print(paste(i, "is NOT NA"))
+    keepcols <- c(keepcols, i)
+    }
+  }
+
+trainingClean <- data.frame()
+trainingClean <- trainingFile[, (names(trainingFile) %in% keepcols)]
+trainingClean$classe <- trainingFile$classe # indicator of how well the bar bell movement is performed on a scale of A to E
+
+testClean <- data.frame()
+testClean <- testFile[, (names(trainingFile) %in% keepcols)]
+testClean$problem_id <- testFile$problem_id # note that the last column is "problem_id" instead of "classe"
+
+trainingClean <- trainingClean[-c(1:7)] #remove the names, timestamp etc columns
+testClean <- testClean[-c(1:7)] #remove the names, timestamp etc columns
+
+#convert to "numeric" class except for the classe factor
+for (i in 1:(length(trainingClean)-1)) {trainingClean[[i]] <- as.numeric(trainingClean[[i]])}
+for (i in 1:(length(testClean)-1)) {testClean[[i]] <- as.numeric(testClean[[i]])}
+
+```
+
+```{r createTrainingandTest, echo=FALSE}
+
+inTrain <- createDataPartition(y=trainingClean$classe, p=0.7, list=FALSE) # Note use of "clean" version of trainingFile
+training <- trainingClean[inTrain,] # Note use of "clean" version of trainingFile
+testing <- trainingClean[-inTrain,] # Note use of "clean" version of trainingFile
+
+# !!! huge roadblock solved - another clean up item (per Class Forum post)
+#  see this stackoverflow discussion:
+# http://stackoverflow.com/questions/13495041/random-forests-in-r-empty-classes-in-y-and-argument-legth-0
+training$classe <- factor(training$classe) #key cleanup actvity
+testing$classe <- factor(testing$classe) #key cleanup actvity
+
+# we are now set up with a set of data we can train and test our models on...let's try some models
+
+```
+
+```{r analyzeCorrelations, echo=FALSE}
+
+trainingCor <- cor(training[, -length(training)]) # account for the classe factor on last column
+highCor <- sum(abs(training[upper.tri(trainingCor)]) > 0.999)
+
+highlyCor <- findCorrelation(training[, -length(training)], cutoff = 0.75)
+
+preProc <- preProcess(training[, -length(training)], method= c("center", "scale"))
+
+trainPredict <- predict(preProc, newdata = training[, -length(training)])
+
+```
+
+```{r modeling, echo=FALSE}
+set.seed(12345)
+
+# let's try a model using 
+
+preProc <- preProcess(training[,-53], method="pca") # "-53" removes the $classe factor element
+trainPC <- predict(preProc, training[,-53]) # note again extraction of $classe
+modelFit <- train(training$classe ~ ., method="rf", data=trainPC) # strange construct, rf for RandomForest
+print(modelFit)
+testPC <- predict(preProc, testing[,-53])
+confusionMatrix(testing$classe, predict(modelFit, testPC))
+
+
+```
