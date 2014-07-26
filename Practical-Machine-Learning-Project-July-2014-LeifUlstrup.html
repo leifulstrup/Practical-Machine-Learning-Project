@@ -62,7 +62,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
-<p>The purpose of this project is to demonstrate the analysis and model building process of machine learning tools and techniques. The subject of this analysis and modeling exercise is a set of experimental data gathered from Brazilian university research team that have instrumented six test subjects with various motion sensors while they perform an exercise with a barbell using five techniques that range “perfect form” (A) to “very poor form” (E). The question these researchers are exploring is whether machine learning techniques can be used on the data they collected to predict whether a person is using proper form in their exercise or not. The ultimate vision of the team is to provide real-time feedback to those performing exercises to improve the quality of their exercise experience.</p>
+<p>The purpose of this project is to demonstrate the analysis and model building process of machine learning tools and techniques. The subject of this analysis and modeling exercise is a set of experimental data gathered from a Brazilian university research team that have instrumented six test subjects with various motion sensors while they perform an exercise with a barbell using five techniques that range “perfect form” (A) to “very poor form” (E). The question these researchers are exploring is whether machine learning techniques can be used on the data they collected to predict whether a person is using proper form in their exercise or not. The ultimate vision of the team is to provide real-time feedback to those performing exercises to improve the quality of their exercise experience.</p>
 <p>The results of the modeling below confirm that this is possible with high accuracy.</p>
 </div>
 <div id="context" class="section level2">
@@ -87,20 +87,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h3>Expected Sample Error Calculations</h3>
 <p>The next step was to follow the guidance from the JHU course on model development and pre-process the training data using the caret preProcess() function, being careful to exclude the “classe” column of factors with the measures A through E of barbell training form since the preProcess function expects all numeric values. I chose the method = “pca” for principal component analysis in the pre-processing stage in the hopes that this would distill the data to a more compact form given the 52 input variables and thus accelerate the learning process of the train() model development stage. I chose the “random forest” technique for model development based on a combination of the lecture overview of its utility, forum discussions, and independent text research.</p>
 <p>Below are the results from the model that I chose to use for this project based on using the confusionMatrix() function with the reference data (testing set) derived from the training file compared to the predictions from the model. This includes the magnitude of the in-sample error rates. The accuracy measures were seemingly high at 97.5% and the reference A-E vs predicted A-E were tightly clustered around the diagonal for most of the measures. The model did have some trouble differentiating some of the predicted results; however, those readings are mostly concentrated in a small number of incorrect predictions. There is likely similarity between certain forms of the exercise and either better modeling techniques are better sensor placement may be needed to improve the differentiation and the prediction accuracy.</p>
-<p>Confusion Matrix and Statistics</p>
-<pre><code>      Reference</code></pre>
-<p>Prediction A B C D E A 1667 2 3 1 1 B 27 1088 23 0 1 C 0 14 1003 9 0 D 3 1 37 921 2 E 0 2 10 10 1060</p>
-<p>Overall Statistics</p>
-<pre><code>           Accuracy : 0.9752         
-             95% CI : (0.9709, 0.979)
-No Information Rate : 0.2884         
-P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
-                                     
-              Kappa : 0.9686         </code></pre>
-<p>Mcnemar’s Test P-Value : 1.242e-09</p>
-<p>Statistics by Class:</p>
-<pre><code>                 Class: A Class: B Class: C Class: D Class: E</code></pre>
-<p>Sensitivity 0.9823 0.9828 0.9322 0.9787 0.9962 Specificity 0.9983 0.9893 0.9952 0.9913 0.9954 Pos Pred Value 0.9958 0.9552 0.9776 0.9554 0.9797 Neg Pred Value 0.9929 0.9960 0.9850 0.9959 0.9992 Prevalence 0.2884 0.1881 0.1828 0.1599 0.1808 Detection Rate 0.2833 0.1849 0.1704 0.1565 0.1801 Detection Prevalence 0.2845 0.1935 0.1743 0.1638 0.1839 Balanced Accuracy 0.9903 0.9861 0.9637 0.9850 0.9958</p>
+
+<p>See the "Confusion Matrix Table below for a complete summary of the performance of the machine learning model.  The key results are:
+
+In-sample Accuracy at 97.5% with a 95% confidence interval from 97% to 97.9%.</p>
+
 </div>
 <div id="reasoning-behind-choices-made" class="section level3">
 <h3>Reasoning Behind Choices Made</h3>
@@ -113,7 +104,8 @@ P-Value [Acc &gt; NIR] : &lt; 2.2e-16
 <p>Here is the link to the public github site for the materials I used in developing this project, Rmd code, and the test set of 20 results expressed in *.txt files: <a href="https://github.com/leifulstrup/Practical-Machine-Learning-Project">https://github.com/leifulstrup/Practical-Machine-Learning-Project</a></p>
 </div>
 <div id="r-code" class="section level3">
-<h3>R Code</h3>
+<h3>R Code Outputs</h3>
+<a href="https://github.com/leifulstrup/Practical-Machine-Learning-Project/blob/master/Practical-Machine-Learning-Project-July-2014-LeifUlstrup.Rmd">Link to .Rmd file with R Source Code.</a>
 <pre><code>## Loading required package: caret
 ## Loading required package: lattice
 ## Loading required package: ggplot2</code></pre>
