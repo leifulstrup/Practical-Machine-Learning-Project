@@ -6,7 +6,7 @@ output: html_document
 ---
 ##Executive Summary
 
-The purpose of this project is to demonstrate the analysis and model building process of machine learning tools and techniques.  The subject of this analysis and modeling exercise is a set of experimental data gathered from Brazilian university research team that have instrumented six test subjects with various motion sensors while they perform an exercise with a barbell using five techniques that range "perfect form" (A) to "very poor form" (E).  The question these researchers are exploring is whether machine learning techniques can be used on the data they collected to predict whether a person is using proper form in their exercise or not.  The ultimate vision of the team is to provide real-time feedback to those performing exercises to improve the quality of their exercise experience.
+The purpose of this project is to demonstrate the analysis and model building process of machine learning tools and techniques.  The subject of this analysis and modeling exercise is a set of experimental data gathered from a Brazilian university research team that have instrumented six test subjects with various motion sensors while they perform an exercise with a barbell using five techniques that range "perfect form" (A) to "very poor form" (E).  The question these researchers are exploring is whether machine learning techniques can be used on the data they collected to predict whether a person is using proper form in their exercise or not.  The ultimate vision of the team is to provide real-time feedback to those performing exercises to improve the quality of their exercise experience.
 
 The results of the modeling below confirm that this is possible with high accuracy.  
 
